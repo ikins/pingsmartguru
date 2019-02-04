@@ -6,13 +6,6 @@
   "version": "com.pingsmart.guru",
   "description": "A sample Apache Cordova application that responds to the deviceready event.",
   "author": "Apache Cordova Team",
-  "icons": [
-    {
-      "src": "icon.png",
-      "type": "image/png",
-      "sizes": "undefinedxundefined"
-    }
-  ],
-  "orientation": "any",
+  "icons": [],
   "start_url": "index.html"
 }

@@ -8,7 +8,33 @@
         Apache Cordova Team
     </author>
     <content src="index.html" />
-    <plugin name="cordova-plugin-whitelist" spec="1" />
+    <preference name="permissions" value="none" />
+    <preference name="orientation" value="default" />
+    <preference name="target-device" value="universal" />
+    <preference name="fullscreen" value="false" />
+    <preference name="webviewbounce" value="true" />
+    <preference name="prerendered-icon" value="true" />
+    <preference name="stay-in-webview" value="false" />
+    <preference name="detect-data-types" value="true" />
+    <preference name="exit-on-suspend" value="false" />
+    <preference name="show-splash-screen-spinner" value="true" />
+    <preference name="auto-hide-splash-screen" value="true" />
+    <preference name="disable-cursor" value="false" />
+    <preference name="android-minSdkVersion" value="16" />
+    <preference name="android-installLocation" value="auto" />
+    <preference name="KeepRunning" value="false" />
+    <preference name="LoadUrlTimeoutValue" value="10000" />
+    <preference name="InAppBrowserStorageEnabled" value="true" />
+    <preference name="LoadingDialog" value="My Title,My Message" />
+    <preference name="ErrorUrl" value="myErrorPage.html" />
+    <preference name="ShowTitle" value="true" />
+    <preference name="LogLevel" value="VERBOSE" />
+    <preference name="AndroidLaunchMode" value="singleTop" />
+    <preference name="DefaultVolumeStream" value="call" />
+    <preference name="OverrideUserAgent" value="Mozilla/5.0 My Browser" />
+    <preference name="AppendUserAgent" value="My Browser" />
+    <preference name="AndroidPersistentFileLocation" value="Compatibility" />
+    <icon src="icon.png" />
     <access origin="*" />
     <allow-intent href="http://*/*" />
     <allow-intent href="https://*/*" />
@@ -18,11 +44,18 @@
     <allow-intent href="geo:*" />
     <platform name="android">
         <allow-intent href="market:*" />
+        <icon density="ldpi" src="res/icon/android/icon-36-ldpi.png" />
+        <icon density="mdpi" src="res/icon/android/icon-48-mdpi.png" />
+        <icon density="hdpi" src="res/icon/android/icon-72-hdpi.png" />
+        <icon density="xhdpi" src="res/icon/android/icon-96-xhdpi.png" />
+        <icon density="xxhdpi" src="res/icon/android/icon-144-xxhdpi.png" />
+        <icon density="xxxhdpi" src="res/icon/android/icon-192-xxxhdpi.png" />
     </platform>
     <platform name="ios">
         <allow-intent href="itms:*" />
         <allow-intent href="itms-apps:*" />
     </platform>
-    <engine name="browser" spec="~5.0.4" />
-    <engine name="android" spec="~7.1.4" />
+    <plugin name="cordova-plugin-whitelist" spec="1" />
+    <engine name="browser" spec="^5.0.4" />
+    <engine name="android" spec="^7.1.4" />
 </widget>

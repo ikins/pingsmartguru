@@ -8,7 +8,6 @@
         Apache Cordova Team
     </author>
     <content src="index.html" />
-    <icon src="icon.png" />
     <access origin="*" />
     <allow-intent href="http://*/*" />
     <allow-intent href="https://*/*" />
@@ -16,30 +15,4 @@
     <allow-intent href="sms:*" />
     <allow-intent href="mailto:*" />
     <allow-intent href="geo:*" />
-    <preference name="permissions" value="none" />
-    <preference name="orientation" value="default" />
-    <preference name="target-device" value="universal" />
-    <preference name="fullscreen" value="false" />
-    <preference name="webviewbounce" value="true" />
-    <preference name="prerendered-icon" value="true" />
-    <preference name="stay-in-webview" value="false" />
-    <preference name="detect-data-types" value="true" />
-    <preference name="exit-on-suspend" value="false" />
-    <preference name="show-splash-screen-spinner" value="true" />
-    <preference name="auto-hide-splash-screen" value="true" />
-    <preference name="disable-cursor" value="false" />
-    <preference name="android-minSdkVersion" value="16" />
-    <preference name="android-installLocation" value="auto" />
-    <preference name="KeepRunning" value="false" />
-    <preference name="LoadUrlTimeoutValue" value="10000" />
-    <preference name="InAppBrowserStorageEnabled" value="true" />
-    <preference name="LoadingDialog" value="My Title,My Message" />
-    <preference name="ErrorUrl" value="myErrorPage.html" />
-    <preference name="ShowTitle" value="true" />
-    <preference name="LogLevel" value="VERBOSE" />
-    <preference name="AndroidLaunchMode" value="singleTop" />
-    <preference name="DefaultVolumeStream" value="call" />
-    <preference name="OverrideUserAgent" value="Mozilla/5.0 My Browser" />
-    <preference name="AppendUserAgent" value="My Browser" />
-    <preference name="AndroidPersistentFileLocation" value="Compatibility" />
 </widget>
