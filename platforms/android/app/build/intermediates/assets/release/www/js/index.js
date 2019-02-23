@@ -7,10 +7,12 @@ var appguru =  angular.module('app', ['onsen','ipCookie','highcharts-ng','ngRout
 
 
 //server
-var _URL        = "http://pingsmart.gallerysneakers27.com/api/";
+var _URL        = "http://pingsmart.webcood.com/api/";
+var BASE_URL    = "http://pingsmart.webcood.com";
 
 //local
 //var _URL        = "http://localhost:7777/apismart/api/";
+//var BASE_URL    = "http://localhost:7777/apismart";
 
 
 var app = {
@@ -58,6 +60,9 @@ appguru.controller('getCurrentInfoWeek', ['$scope', '$http','ipCookie', function
     $scope.logout = function(){
         window.localStorage.removeItem("member_id_guru");
         window.localStorage.removeItem("token_guru");
+        window.localStorage.removeItem("nip_guru");
+        window.localStorage.removeItem("nama");
+        window.localStorage.removeItem("avatar");
 
         fn.load('landing-page.html');
     };
@@ -90,6 +95,9 @@ appguru.controller('PageController', ['$scope', '$http','ipCookie', 'md5', funct
                     window.localStorage.setItem("member_id_guru", response.data[0].MemberId);
                     window.localStorage.setItem("token_guru", response.data[0].Token);
                     window.localStorage.setItem("nip_guru", response.data[0].NIP);
+                    //--
+                    window.localStorage.setItem("nama", response.data[0].Nama);
+                    window.localStorage.setItem("avatar", response.data[0].Avatar);
 
                     fn.load('dashboard.html');
 
@@ -151,6 +159,48 @@ appguru.controller('PageController', ['$scope', '$http','ipCookie', 'md5', funct
 
 appguru.controller('Pagedashboard', ['$scope', '$http', function($scope, $http) {
 
+  $scope.Nama = window.localStorage.getItem("nama");
+  $scope.NIP = window.localStorage.getItem("nip_guru");
+  $scope.Avatar = window.localStorage.getItem("avatar");
+
+  $scope.URL_Avatar = BASE_URL + "/" + $scope.Avatar;
+
+  token_guru  = window.localStorage.getItem("token_guru");
+
+  $http.get( _URL+"ajar?token=" + token_guru)
+      .success(function (response) {
+
+        $scope.JumJamAjar = response.data[0].JumJamAjar;
+        $scope.Pelajaran = response.data[0].Pelajaran;
+        $scope.JamAjar = response.data[0].JamAjar;
+
+  });
+
+}]);
+
+appguru.controller('PageKelas', ['$scope', '$http', function($scope, $http) {
+
+    token_guru  = window.localStorage.getItem("token_guru");
+
+    $http.get( _URL+"show-my-class?token=" + token_guru)
+        .success(function (response) {
+
+        $scope.list_kelas = response.data;
+
+    });
+
+}]);
+
+appguru.controller('PageMataPelajaran', ['$scope', '$http', function($scope, $http) {
+
+    token_guru  = window.localStorage.getItem("token_guru");
+
+    $http.get( _URL+"pelajaran-by-guru?token=" + token_guru)
+        .success(function (response) {
+
+        $scope.list_mata_pelajaran = response.data;
+
+    });
 
 }]);
 
@@ -159,12 +209,40 @@ appguru.controller('PageJadwal', ['$scope', '$http', function($scope, $http) {
     token_guru  = window.localStorage.getItem("token_guru");
     nip_guru    = window.localStorage.getItem("nip_guru");
 
-    $http.get( _URL+"guru-jadwal?nis=" + nip_guru + "&token=" + token_guru)
+    $http.get( _URL+"jadwal-ajar?token=" + token_guru)
         .success(function (response) {
 
         $scope.list_jadwal = response.data;
 
     });
+
+}]);
+
+appguru.controller('PageNilaiUlangan', ['$scope', '$http', function($scope, $http) {
+
+    token_guru  = window.localStorage.getItem("token_guru");
+    nip_guru    = window.localStorage.getItem("nip_guru");
+
+    $http.get( _URL+"nilai-by-guru?token=" + token_guru)
+        .success(function (response) {
+
+        $scope.list_nilai_ulangan = response.data;
+
+    });
+
+    this.showDialog = function(Id) {
+      if (this.dialog) {
+        this.dialog.show();
+      } else {
+        
+        $scope.Id = Id;
+        ons.createElement('detail-nilai-ulangan.html', { parentScope: $scope, append: true })
+          .then(function(dialog) {
+            this.dialog = dialog;
+            dialog.show();
+          }.bind(this));
+      }
+    }.bind(this);
 
 }]);
 
