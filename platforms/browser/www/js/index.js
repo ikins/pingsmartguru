@@ -246,23 +246,61 @@ appguru.controller('PageNilaiUlangan', ['$scope', '$http', function($scope, $htt
 
 }]);
 
-appguru.controller('PageAgenda', ['$scope', '$http', function($scope, $http) {
-
-
-}]);
-
-appguru.controller('PageAkademik', ['$scope', '$http', function($scope, $http) {
-
-
-}]);
-
 appguru.controller('PagePengumuman', ['$scope', '$http', function($scope, $http) {
 
+    token_guru  = window.localStorage.getItem("token_guru");
+    nip_guru    = window.localStorage.getItem("nip_guru");
+
+    $http.get( _URL+"guru-pengumuman?token=" + token_guru)
+        .success(function (response) {
+
+        $scope.list_pengumuman = response.data;
+
+    });
 
 }]);
 
-appguru.controller('PageGaleri', ['$scope', '$http', function($scope, $http) {
+appguru.controller('PageAgenda', ['$scope', '$http', function($scope, $http) {
 
+    token_guru  = window.localStorage.getItem("token_guru");
+    nip_guru    = window.localStorage.getItem("nip_guru");
+
+    $http.get( _URL+"guru-agenda?token=" + token_guru)
+        .success(function (response) {
+
+        $scope.list_agenda = response.data;
+
+    });
+
+}]);
+
+appguru.controller('PageAlbum', ['$scope', '$http', function($scope, $http) {
+
+    token_guru  = window.localStorage.getItem("token_guru");
+    nip_guru    = window.localStorage.getItem("nip_guru");
+
+    $scope.BASE_URL = BASE_URL;
+
+    $http.get( _URL+"guru-album?token=" + token_guru)
+        .success(function (response) {
+
+        $scope.list_album = response.data;
+
+    });
+
+}]);
+
+appguru.controller('PageEvent', ['$scope', '$http', function($scope, $http) {
+
+    token_guru  = window.localStorage.getItem("token_guru");
+    nip_guru    = window.localStorage.getItem("nip_guru");
+
+    $http.get( _URL+"guru-event")
+        .success(function (response) {
+
+        $scope.list_event = response.data;
+
+    });
 
 }]);
 
