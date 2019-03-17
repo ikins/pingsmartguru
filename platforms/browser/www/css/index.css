@@ -637,9 +637,10 @@ a.log-a {
  
 .list-kelas h3 {
   font-family: 'Raleway', sans-serif;
-  font-weight: 200;
+  font-weight: bold;
   font-size: 18px;
-  color: #9e9b9b;
+  color: #007399;
+  padding-left: 15px;
 }
  
 .list-kelas li img {
@@ -658,14 +659,35 @@ a.log-a {
   overflow: auto;
 }
  
-.list-kelas li:hover {
-  background: #eee;
+.list-kelas .top-kelas li:hover {
   cursor: pointer;
+  font-family: 'Raleway', sans-serif;
+  -webkit-box-shadow: 1px 1px 10px 1px #6E6E6E;
+  box-shadow: 1px 1px 10px 1px #d0d0d0;
+  -webkit-border-radius: 10px 10px 10px 10px;
+  border-radius: 10px 10px 10px 10px;
 }
 
 .list-kelas ul li ul li {
     color: #595d5f;
     margin: 0;
+}
+
+.list-kelas .siswa {
+  padding: 5px;
+  color: #333;
+  font-size: 12px;
+}
+
+.list-kelas .pelajaran {
+  padding: 5px;
+  -webkit-border-radius: 5px;
+  -moz-border-radius: 5px;
+  border-radius: 5px;
+  background-color: #e65c00;
+  color: #fff;
+  font-weight: bold;
+  font-size: 14px;
 }
 
 /** Popover 
@@ -723,4 +745,157 @@ a.log-a {
     /* background-image: linear-gradient(#ccc,#ccc),linear-gradient(#ccc,#ccc); */
     background-size: 100% 1px,100% 1px;
     border: none;
+}
+
+/** Box List 
+*-----------------------------------
+*/
+.box-list{
+
+  font-family: 'Raleway', sans-serif;
+  width: 90%; 
+  -webkit-box-shadow: 1px 1px 10px 1px #6E6E6E;
+  box-shadow: 1px 1px 10px 1px #d0d0d0;
+  -webkit-border-radius: 10px 10px 10px 10px;
+  border-radius: 10px 10px 10px 10px;
+  margin: 5px 10px;
+  padding: 10px;
+}
+
+.box-list .title{
+  font-family: 'Raleway', sans-serif;
+  font-weight: bold;
+  font-size: 12px;
+  color: #2b9cd4;
+  padding: 6px;
+}
+
+.box-list .content{
+  font-family: 'Raleway', sans-serif;
+  padding: 6px;
+  -webkit-border-radius: 5px;
+  -moz-border-radius: 5px;
+  border-radius: 5px;
+  background-color: #e65c00;
+  color: #fff;
+  font-weight: bold;
+  font-size: 12px;
+
+}
+/** Img List 
+*-----------------------------------
+*/
+
+.post-container {
+  overflow: auto
+  font-family: 'Raleway', sans-serif;
+  width: 90%; 
+  -webkit-box-shadow: 1px 1px 10px 1px #6E6E6E;
+  box-shadow: 1px 1px 10px 1px #d0d0d0;
+  -webkit-border-radius: 10px 10px 10px 10px;
+  border-radius: 10px 10px 10px 10px;
+  margin: 5px 10px;
+  padding: 10px;
+}
+.post-thumb {
+    float: left;
+    margin-right: 15px;
+}
+.post-thumb img {
+  display: block;
+  width: 80px;
+  height: 80px;
+  line-height: 80px;
+  -webkit-clip-path: circle(50.0% at 50% 50%);
+  clip-path: circle(50.0% at 50% 50%);
+  margin: 0 auto;
+}
+.post-info {
+    float: left;
+}
+.post-content {
+  font-family: 'Raleway', sans-serif;
+  padding: 5px;
+  -webkit-border-radius: 5px;
+  -moz-border-radius: 5px;
+  border-radius: 5px;
+  background-color: #e65c00;
+  color: #fff;
+  font-weight: bold;
+  font-size: 12px;
+}
+.post-title {
+  font-family: 'Raleway', sans-serif;
+  font-weight: bold;
+  font-size: 12px;
+  color: #2b9cd4;
+  padding: 5px;
+}
+
+/** Dialog 
+*-----------------------------------
+*/
+
+.dialog-popup{
+  text-align: left;
+  font-family: 'Raleway', sans-serif;
+  padding: 10px;
+}
+
+.title-nilai{
+  text-align: center;
+  font-size: 14px;
+  font-weight: 400;
+}
+
+.dialog-popup .title{
+  text-align: left;
+  font-family: 'Raleway', sans-serif;
+  font-size: 14px;
+  font-weight: bold;
+  color: #333;
+  margin-top: 5px;
+  border-top: 1px solid #e2dcdc;
+  padding-top: 5px;
+}
+
+.dialog-popup .content{
+  text-align: left;
+  font-family: 'Raleway', sans-serif;
+  font-size: 12px;
+}
+
+/** Info 
+*-----------------------------------
+*/
+
+.info {
+  padding: 10px;
+  width: 100%;
+}
+
+.info .tanggal{
+  font-family: 'Raleway', sans-serif;
+  font-size: 12px;
+  font-weight: 400;
+}
+
+.info .judul{
+  font-family: 'Raleway', sans-serif;
+  font-size: 14px;
+  font-weight: bold;
+  color: #0c6390;
+}
+
+.info .deskripsi{
+  font-family: 'Raleway', sans-serif;
+  font-size: 12px;
+  font-weight: 400;
+  padding: 40px 0;
+}
+
+.info .publish{
+  font-family: 'Raleway', sans-serif;
+  font-size: 14px;
+  font-weight: 400;
 }

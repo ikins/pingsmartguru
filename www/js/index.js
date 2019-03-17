@@ -3,16 +3,16 @@
 ** Bandung 1 Jan 2019
 */
 
-var appguru =  angular.module('app', ['onsen','ipCookie','highcharts-ng','ngRoute','angular-md5','angular-loading-bar']);
+var appguru =  angular.module('app', ['onsen','ipCookie','highcharts-ng','ngRoute','angular-md5','angular-loading-bar','ngSanitize']);
 
 
 //server
-var _URL        = "http://smartschool.trilogi-solution.com/api/";
-var BASE_URL    = "http://smartschool.trilogi-solution.com";
+//var _URL        = "http://smartschool.trilogi-solution.com/api/";
+//var BASE_URL    = "http://smartschool.trilogi-solution.com";
 
 //local
-//var _URL      = "http://localhost:7777/apismart/api/";
-//var BASE_URL  = "http://localhost:7777/apismart";
+var _URL      = "http://localhost:7777/apismart/api/";
+var BASE_URL  = "http://localhost:7777/apismart";
 
 
 var app = {
@@ -189,6 +189,21 @@ appguru.controller('PageKelas', ['$scope', '$http', function($scope, $http) {
 
     });
 
+
+}]);
+
+appguru.controller('PageKelasSiswa', ['$scope', '$http', function($scope, $http) {
+
+    token_guru  = window.localStorage.getItem("token_guru");
+    $scope.URL_Avatar = BASE_URL;
+
+    $http.get( _URL+"siswa-by-kelas?token="+ token_guru +"&kodekls="+ $scope.data.msg)
+          .success(function (response) {
+
+          $scope.list_kelas_siswa = response.data;
+
+    });
+
 }]);
 
 appguru.controller('PageMataPelajaran', ['$scope', '$http', function($scope, $http) {
@@ -218,7 +233,7 @@ appguru.controller('PageJadwal', ['$scope', '$http', function($scope, $http) {
 
 }]);
 
-appguru.controller('PageNilaiUlangan', ['$scope', '$http', function($scope, $http) {
+appguru.controller('PageNilai', ['$scope', '$http', function($scope, $http) {
 
     token_guru  = window.localStorage.getItem("token_guru");
     nip_guru    = window.localStorage.getItem("nip_guru");
@@ -230,19 +245,62 @@ appguru.controller('PageNilaiUlangan', ['$scope', '$http', function($scope, $htt
 
     });
 
-    this.showDialog = function(Id) {
-      if (this.dialog) {
-        this.dialog.show();
-      } else {
-        
-        $scope.Id = Id;
-        ons.createElement('detail-nilai-ulangan.html', { parentScope: $scope, append: true })
-          .then(function(dialog) {
-            this.dialog = dialog;
-            dialog.show();
-          }.bind(this));
-      }
-    }.bind(this);
+}]);
+
+appguru.controller('PageNilaiUlangan', ['$scope', '$http', function($scope, $http) {
+
+    token_guru  = window.localStorage.getItem("token_guru");
+    nip_guru    = window.localStorage.getItem("nip_guru");
+
+    $http.get( _URL+"nilai-by-guru-ulangan?token=" + token_guru)
+        .success(function (response) {
+
+        $scope.list_nilai_ulangan = response.data;
+
+    });
+
+}]);
+
+appguru.controller('PageNilaiUts', ['$scope', '$http', function($scope, $http) {
+
+    token_guru  = window.localStorage.getItem("token_guru");
+    nip_guru    = window.localStorage.getItem("nip_guru");
+
+    $http.get( _URL+"nilai-by-guru-uts?token=" + token_guru)
+        .success(function (response) {
+
+        $scope.list_nilai_uts = response.data;
+
+    });
+
+}]);
+
+appguru.controller('PageNilaiUas', ['$scope', '$http', function($scope, $http) {
+
+    token_guru  = window.localStorage.getItem("token_guru");
+    nip_guru    = window.localStorage.getItem("nip_guru");
+
+    $http.get( _URL+"nilai-by-guru-uas?token=" + token_guru)
+        .success(function (response) {
+
+        $scope.list_nilai_uas = response.data;
+
+    });
+
+}]);
+
+
+appguru.controller('PageNilaiRaport', ['$scope', '$http', function($scope, $http) {
+
+    token_guru  = window.localStorage.getItem("token_guru");
+    nip_guru    = window.localStorage.getItem("nip_guru");
+
+    $http.get( _URL+"nilai-by-guru-raport?token=" + token_guru)
+        .success(function (response) {
+
+        $scope.list_nilai_raport = response.data;
+
+    });
 
 }]);
 
@@ -260,6 +318,84 @@ appguru.controller('PagePengumuman', ['$scope', '$http', function($scope, $http)
 
 }]);
 
+appguru.controller('PagePengumumanDetail', ['$scope', '$http', function($scope, $http) {
+
+    token_guru  = window.localStorage.getItem("token_guru");
+    nip_guru    = window.localStorage.getItem("nip_guru");
+
+    $http.get( _URL+"guru-pengumuman-detail?token=" + token_guru + "&id=" + $scope.data.msg)
+        .success(function (response) {
+
+        $scope.Tanggal = response.data[0].Tanggal;
+        $scope.Judul = response.data[0].Judul;
+        $scope.Pengumuman = response.data[0].Pengumuman;
+        $scope.BeginPublish = response.data[0].BeginPublish;
+        $scope.EndPublish = response.data[0].EndPublish;
+
+    });
+
+}]);
+
+appguru.controller('PageNilaiShow', ['$scope', '$http', function($scope, $http) {
+
+    token_guru  = window.localStorage.getItem("token_guru");
+    nip_guru    = window.localStorage.getItem("nip_guru");
+
+    $http.get( _URL+"nilai-by-guru?token=" + token_guru)
+        .success(function (response) {
+
+        $scope.list_nilai_ulangan = response.data;
+
+    });
+
+
+    $http.get( _URL+"nilai-detail-by-guru?kode=" + $scope.data.msg + "&token=" + token_guru)
+        .success(function (response) {
+
+          $scope.list_nilai_show = response.data;
+
+
+    });
+
+    this.showDialog = function(Id) {
+
+      if(Id != '') {
+
+            //variable detail nilai
+            token_guru  = window.localStorage.getItem("token_guru");
+
+            $http.get( _URL+"nilai-detail-siswa-by-guru?id=" + Id + "&token=" + token_guru)
+            .success(function (response) {
+
+                $scope.NIS = response.data[0].NIS;
+                $scope.Nama = response.data[0].Nama;
+                $scope.KodePel = response.data[0].KodePel;
+                $scope.Pelajaran = response.data[0].Pelajaran;
+                $scope.Nilai = response.data[0].Nilai;
+                $scope.Standar = response.data[0].Standar;
+                $scope.Status = response.data[0].Status;
+                $scope.TglInput = response.data[0].TglInput;
+                $scope.Jenis = response.data[0].Jenis;
+                $scope.Keterangan = response.data[0].Keterangan;
+
+
+            });
+
+        }
+
+      if (this.dialog) {
+        this.dialog.show();
+      } else {
+        ons.createElement('detail-nilai.html', { parentScope: $scope, append: true })
+          .then(function(dialog) {
+            this.dialog = dialog;
+            dialog.show();
+          }.bind(this));
+      }
+    }.bind(this);
+
+}]);
+
 appguru.controller('PageAgenda', ['$scope', '$http', function($scope, $http) {
 
     token_guru  = window.localStorage.getItem("token_guru");
@@ -269,6 +405,25 @@ appguru.controller('PageAgenda', ['$scope', '$http', function($scope, $http) {
         .success(function (response) {
 
         $scope.list_agenda = response.data;
+
+    });
+
+}]);
+
+appguru.controller('PageAgendaDetail', ['$scope', '$http', function($scope, $http) {
+
+    token_guru  = window.localStorage.getItem("token_guru");
+    nip_guru    = window.localStorage.getItem("nip_guru");
+
+    $http.get( _URL+"guru-agenda-detail?token=" + token_guru +"&id="+ $scope.data.msg)
+        .success(function (response) {
+
+        $scope.TglAwal = response.data[0].TglAwal;
+        $scope.TglAkhir = response.data[0].TglAkhir;
+        $scope.JamAwal = response.data[0].JamAwal;
+        $scope.JamAkhir = response.data[0].JamAkhir;
+        $scope.Judul = response.data[0].Judul;
+        $scope.Deskripsi = response.data[0].Deskripsi;
 
     });
 
@@ -290,15 +445,81 @@ appguru.controller('PageAlbum', ['$scope', '$http', function($scope, $http) {
 
 }]);
 
-appguru.controller('PageEvent', ['$scope', '$http', function($scope, $http) {
+appguru.controller('PageAlbumDetail', ['$scope', '$http', function($scope, $http) {
 
     token_guru  = window.localStorage.getItem("token_guru");
     nip_guru    = window.localStorage.getItem("nip_guru");
 
-    $http.get( _URL+"guru-event")
+    $scope.BASE_URL = BASE_URL;
+
+    $http.get( _URL+"guru-album-detail?token=" + token_guru +"&id="+ $scope.data.msg)
         .success(function (response) {
 
-        $scope.list_event = response.data;
+
+        $scope.list_album_detail = response.data;
+
+    });
+
+    this.showDialog = function(Id) {
+
+      if(Id != '') {
+
+            //variable detail nilai
+            token_guru  = window.localStorage.getItem("token_guru");
+
+            $http.get( _URL+"guru-album-detail-view?token=" + token_guru +"&id="+ Id)
+            .success(function (response) {
+
+                $scope.Image = response.data[0].Image;
+
+
+            });
+
+        }
+
+      if (this.dialog) {
+        this.dialog.show();
+      } else {
+
+        ons.createElement('detail-album-view.html', { parentScope: $scope, append: true })
+          .then(function(dialog) {
+            this.dialog = dialog;
+            dialog.show();
+          }.bind(this));
+      }
+    }.bind(this);
+
+}]);
+
+appguru.controller('PageAkademik', ['$scope', '$http', function($scope, $http) {
+
+    token_guru  = window.localStorage.getItem("token_guru");
+    nip_guru    = window.localStorage.getItem("nip_guru");
+
+    $http.get( _URL+"guru-akademik")
+        .success(function (response) {
+
+        $scope.list_akademik = response.data;
+
+    });
+
+}]);
+
+
+appguru.controller('PageAkademikDetail', ['$scope', '$http', function($scope, $http) {
+
+    token_guru  = window.localStorage.getItem("token_guru");
+    nip_guru    = window.localStorage.getItem("nip_guru");
+
+    $http.get( _URL+"guru-akademik-detail?id="+ $scope.data.msg)
+        .success(function (response) {
+
+        $scope.Tanggal = response.data[0].Tanggal;
+        $scope.Event = response.data[0].Event;
+        $scope.Tempat = response.data[0].Tempat;
+        $scope.Deskripsi = response.data[0].Deskripsi;
+        $scope.Status = response.data[0].Status;
+        $scope.Keterangan = response.data[0].Keterangan;
 
     });
 

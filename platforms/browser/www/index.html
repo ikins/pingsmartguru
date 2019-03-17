@@ -38,6 +38,8 @@
         <script src="js/jquery.min.js"></script>
         <script src="js/highcharts.js"></script>
         <script src="js/highcharts-ng.min.js"></script>
+        <script src="lib/angular-sanitize/1.4.3/angular-sanitize.min.js"></script>
+
 
 
     </head>
@@ -221,11 +223,11 @@
                   </a>
                 </ons-col>
                 <ons-col>
-                  <a href="#" onclick="fn.load('event.html')" class="nav-page">
+                  <a href="#" onclick="fn.load('akademik.html')" class="nav-page">
                     <div class="content-icon">
                       <i class="fa fa-university"></i>
                     </div>
-                    <span>Event</span>
+                    <span>Akademik</span>
                   </a>
                 </ons-col>
                 <ons-col>
@@ -301,16 +303,82 @@
 
                 <div class="list-kelas">
                   <ul>
-                      <li ng-repeat="w in list_kelas | filter:searchText">
-                          <h3>{{w.KodeKelas}}</h3>
+                      <li ng-repeat="w in list_kelas | filter:searchText" class="top-kelas">
+                          <h3><a href="#" ng-click="data.msg=w.KodeKelas" onclick="fn.load('detail-kelas.html')">{{w.KodeKelas}}</a></h3>
                           <ul>
                               <li ng-repeat="e in w.Ajar">
-                              <div>Siswa : {{e.Siswa}}</div>
-                              <div>{{e.Pelajaran}}</div>
+                              <div class="siswa">{{e.Siswa}} Siswa</div>
+                              <div class="pelajaran">{{e.Pelajaran}}</div>
                               </li>
                           </ul>
                       </li>
                   </ul>
+                </div>
+
+              </ons-row>
+            
+            
+            <ons-popover id="popover-dialog" cancelable direction="down" cover-target target="#info-button">
+              <ons-list id="popover-list">
+                <ons-list-item class="more-options" onclick="fn.load('dashboard.html')" tappable>
+                  <div class="center">Home</div>
+                </ons-list-item>
+                <ons-list-item class="more-options" ng-click="logout()" tappable>
+                  <div class="center">Logout</div>
+                </ons-list-item>
+              </ons-list>
+            </ons-popover>
+            
+            <script>
+              ons.getScriptPage().onInit = function () {
+
+                var toolbarButton = ons.platform.isAndroid() ? ons.createElement(`<ons-icon icon="md-more-vert"></ons-icon>`) : ons.createElement(`<span><i class="zmdi zmdi-more-vert"></i></span>`);
+                var infoButton = document.getElementById('info-button');
+                infoButton.appendChild(toolbarButton);
+                
+                window.fn.showDialog = function (id) {
+                  var elem = document.getElementById(id);
+                  if (id === 'popover-dialog') {
+                    elem.show(infoButton);
+                  }
+                };
+              
+              };
+            </script>
+
+          </ons-page>
+        </template>
+
+        <!-- kelas -->
+        <template id="detail-kelas.html">
+          <ons-page ng-controller="PageKelasSiswa" id="contentpage">
+            <ons-toolbar class="toolbar">
+              <div class="left">
+                <ons-back-button onclick="fn.load('kelas.html')"></ons-back-button>
+              </div>
+              <div class="center toolbar-head-title">
+                Kelas Siswa
+              </div>
+              <div class="right">
+                <ons-toolbar-button id="info-button" onclick="fn.showDialog('popover-dialog')"></ons-toolbar-button>
+              </div>
+            </ons-toolbar>
+
+
+            <!-- Content -->
+            <ons-row class="page-content">
+
+                <div class="search-bar">
+                  <i class="icon fa fa-search"></i>
+                  <input class="input-text" type="text" ng-model="searchText" placeholder="Search ...">
+                </div>
+
+                <div class="post-container" ng-repeat="x in list_kelas_siswa | filter:searchText">                
+                   <div class="post-thumb"><img ng-src="{{URL_Avatar}}/{{ x.Foto }}" /></div>
+                   <div class="post-info">
+                     <div class="post-title">{{ x.NIS }}</div>
+                     <div class="post-content">{{ x.Nama }}</div>
+                   </div>
                 </div>
 
               </ons-row>
@@ -369,23 +437,10 @@
                   <i class="icon fa fa-search"></i>
                   <input class="input-text" type="text" ng-model="searchText" placeholder="Search ...">
               </div>
-
-                <table class="content-table content-table-horizontal content-table-highlight" cellspacing="2" cellpadding="5" width="100%" border="0">
-                    <thead>
-                        <tr>
-                          <th>Pelajaran</th>
-                          <th>Kelas</th>
-                        </tr>
-                    </thead>
-                    <tbody>
-                      <tr ng-repeat="x in list_mata_pelajaran | filter:searchText">
-
-                        <td><a href="#" title="Info nilai" class="info-nilai" ng-click="page.showDialog(x.Id)">{{ x.Pelajaran }}</a></td>
-                        <td>{{ x.KodeKelas }}</td>
-
-                      </tr>
-                    </tbody>
-                </table>
+              <div class="box-list" ng-repeat="x in list_mata_pelajaran | filter:searchText">
+                  <div class="title">Mata Pelajan {{ x.Pelajaran }}</div>
+                  <div class="content">Kelas {{ x.KodeKelas }}</div>
+              </div>
             </ons-row>
             
             
@@ -496,7 +551,7 @@
 
         <!-- nilai -->
         <template id="nilai.html">
-          <ons-page ng-controller="PageNilaiUlangan" id="contentpage">
+          <ons-page ng-controller="PageNilai as page" id="contentpage">
             <ons-toolbar class="toolbar">
               <div class="left">
                 <ons-back-button onclick="fn.load('dashboard.html')"></ons-back-button>
@@ -512,7 +567,9 @@
 
             <ons-tabbar swipeable id="appTabbar" position="auto">
               <ons-tab label="Nilai Ulangan" icon="fa-list-ol" page="nilai-ulangan.html" active></ons-tab>
-              <ons-tab label="Raport" icon="fa-list" page="nilai-raport.html"></ons-tab>
+              <ons-tab label="UTS" icon="fa-list-ol" page="nilai-uts.html"></ons-tab>
+              <ons-tab label="UAS" icon="fa-list-ol" page="nilai-uas.html"></ons-tab>
+              <ons-tab label="Raport" icon="fa-list-ol" page="nilai-raport.html"></ons-tab>
             </ons-tabbar>
 
             <script>
@@ -557,56 +614,27 @@
 
         <!-- nilai ulangan -->
         <template id="nilai-ulangan.html">
-          <ons-page ng-controller="PageNilaiUlangan as page" id="contentpage">
+          <ons-page ng-controller="PageNilaiUlangan" id="contentpage">
 
             <!-- Content -->
-
             <ons-row class="page-content">
               <div class="search-bar">
                   <i class="icon fa fa-search"></i>
                   <input class="input-text" type="text" ng-model="searchText" placeholder="Search ...">
               </div>
-
-                <table class="content-table content-table-horizontal content-table-highlight" cellspacing="2" cellpadding="5" width="100%" border="0">
-                    <thead>
-                        <tr>
-                          <th>Tanggal</th>
-                          <th>Pelajaran</th>
-                        </tr>
-                    </thead>
-                    <tbody>
-                      <tr ng-repeat="x in list_nilai_ulangan | filter:searchText">
-
-                        <td><a href="#" title="Info nilai" class="info-nilai" ng-click="page.showDialog(x.Id)">{{ x.Tanggal }}</a></td>
-                        <td>{{ x.Pelajaran }}</td>
-
-                      </tr>
-                    </tbody>
-                </table>
+              <div class="box-list" ng-repeat="x in list_nilai_ulangan | filter:searchText">
+                  <div class="title"><a href="#" title="Info nilai" class="info-nilai" ng-click="data.msg=x.Kode" onclick="fn.load('nilai-show.html')">{{ x.Tanggal }}</a></div>
+                  <div class="title"><a href="#" title="Info nilai" class="info-nilai" ng-click="data.msg=x.Kode" onclick="fn.load('nilai-show.html')">Mata Pelajan {{ x.Pelajaran }}</a></div>
+                  <div class="content">{{ x.KodeKelas }}</div>
+              </div>
             </ons-row>
 
           </ons-page>
         </template>
 
-
-        <template id="detail-nilai-ulangan.html">
-          <ons-dialog id="dialog-3">
-            <div style="text-align: center; padding: 10px;">
-              <p>
-                Detail Nilai Ulangan
-                {{Id}}
-              <p>
-
-              <p>
-                <ons-button ng-click="page.dialog.hide()">Close</ons-button>
-              </p>
-            </div>
-          </ons-dialog>
-        </template>
-
-        <!-- nilai raport -->
-        <template id="nilai-raport.html">
-          <ons-page ng-controller="PageNilaiUlangan" id="contentpage">
+        <!-- nilai uts -->
+        <template id="nilai-uts.html">
+          <ons-page ng-controller="PageNilaiUts" id="contentpage">
 
             <!-- Content -->
             <ons-row class="page-content">
@@ -614,25 +642,147 @@
                   <i class="icon fa fa-search"></i>
                   <input class="input-text" type="text" ng-model="searchText" placeholder="Search ...">
                 </div>
-                <table class="content-table content-table-horizontal content-table-highlight" cellspacing="2" cellpadding="5" width="100%" border="0">
-                    <thead>
-                        <tr>
-                          <th>Tanggal</th>
-                          <th>Pelajaran</th>
-                        </tr>
-                      </thead>
-                    <tbody>
-                      <tr ng-repeat="x in list_nilai_ulangan | filter:searchText">
-
-                        <td><a href="#" title="Info nilai" class="info-nilai" ng-click="data.msg=x.Id" onclick="fn.load('detail-nilai.html')">{{ x.Tanggal }}</a></td>
-                        <td>{{ x.Pelajaran }}</td>
-
-                      </tr>
-                    </tbody>
-                </table>
+                <div class="box-list" ng-repeat="x in list_nilai_uts | filter:searchText">
+                  <div class="title"><a href="#" title="Info nilai" class="info-nilai" ng-click="data.msg=x.Kode" onclick="fn.load('nilai-show.html')">{{ x.Tanggal }}</a></div>
+                  <div class="title"><a href="#" title="Info nilai" class="info-nilai" ng-click="data.msg=x.Kode" onclick="fn.load('nilai-show.html')">Mata Pelajan {{ x.Pelajaran }}</a></div>
+                  <div class="content">{{ x.KodeKelas }}</div>
+              </div>
             </ons-row>
 
           </ons-page>
+        </template>
+
+        <!-- nilai uas -->
+        <template id="nilai-uas.html">
+          <ons-page ng-controller="PageNilaiUas" id="contentpage">
+
+            <!-- Content -->
+            <ons-row class="page-content">
+                <div class="search-bar">
+                  <i class="icon fa fa-search"></i>
+                  <input class="input-text" type="text" ng-model="searchText" placeholder="Search ...">
+                </div>
+                <div class="box-list" ng-repeat="x in list_nilai_uas | filter:searchText">
+                  <div class="title"><a href="#" title="Info nilai" class="info-nilai" ng-click="data.msg=x.Kode" onclick="fn.load('nilai-show.html')">{{ x.Tanggal }}</a></div>
+                  <div class="title"><a href="#" title="Info nilai" class="info-nilai" ng-click="data.msg=x.Kode" onclick="fn.load('nilai-show.html')">Mata Pelajan {{ x.Pelajaran }}</a></div>
+                  <div class="content">{{ x.KodeKelas }}</div>
+              </div>
+            </ons-row>
+
+          </ons-page>
+        </template>
+
+        <!-- nilai raport -->
+        <template id="nilai-raport.html">
+          <ons-page ng-controller="PageNilaiRaport" id="contentpage">
+
+            <!-- Content -->
+            <ons-row class="page-content">
+                <div class="search-bar">
+                  <i class="icon fa fa-search"></i>
+                  <input class="input-text" type="text" ng-model="searchText" placeholder="Search ...">
+                </div>
+                <div class="box-list" ng-repeat="x in list_nilai_raport | filter:searchText">
+                  <div class="title"><a href="#" title="Info nilai" class="info-nilai" ng-click="data.msg=x.Kode" onclick="fn.load('nilai-show.html')">{{ x.Tanggal }}</a></div>
+                  <div class="title"><a href="#" title="Info nilai" class="info-nilai" ng-click="data.msg=x.Kode" onclick="fn.load('nilai-show.html')">Mata Pelajan {{ x.Pelajaran }}</a></div>
+                  <div class="content">{{ x.KodeKelas }}</div>
+              </div>
+            </ons-row>
+
+          </ons-page>
+        </template>
+
+        <!-- nilai show -->
+        <template id="nilai-show.html">
+          <ons-page ng-controller="PageNilaiShow as page" id="contentpage">
+            <ons-toolbar class="toolbar">
+              <div class="left">
+                <ons-back-button onclick="fn.load('nilai.html')"></ons-back-button>
+              </div>
+              <div class="center toolbar-head-title">
+                Nilai Siswa
+              </div>
+              <div class="right">
+                <ons-toolbar-button id="info-button" onclick="fn.showDialog('popover-dialog')"></ons-toolbar-button>
+              </div>
+            </ons-toolbar>
+
+
+            <!-- Content -->
+            <ons-row class="page-content">
+              <div class="search-bar">
+                  <i class="icon fa fa-search"></i>
+                  <input class="input-text" type="text" ng-model="searchText" placeholder="Search ...">
+              </div>
+              <div class="box-list" ng-repeat="x in list_nilai_show | filter:searchText">
+                  <div class="title"><a href="#" title="Info nilai" class="info-nilai" ng-click="page.showDialog(x.Id)">{{ x.NIS }}</a></div>
+                  <div class="title"><a href="#" title="Info nilai" class="info-nilai" ng-click="page.showDialog(x.Id)"> {{ x.Nama }}</a></div>
+                  <div class="content">{{ x.Pelajaran }}</div>
+              </div>
+            </ons-row>
+            
+            
+            <ons-popover id="popover-dialog" cancelable direction="down" cover-target target="#info-button">
+              <ons-list id="popover-list">
+                <ons-list-item class="more-options" onclick="fn.load('dashboard.html')" tappable>
+                  <div class="center">Home</div>
+                </ons-list-item>
+                <ons-list-item class="more-options" ng-click="logout()" tappable>
+                  <div class="center">Logout</div>
+                </ons-list-item>
+              </ons-list>
+            </ons-popover>
+            
+            <script>
+              ons.getScriptPage().onInit = function () {
+
+                var toolbarButton = ons.platform.isAndroid() ? ons.createElement(`<ons-icon icon="md-more-vert"></ons-icon>`) : ons.createElement(`<span><i class="zmdi zmdi-more-vert"></i></span>`);
+                var infoButton = document.getElementById('info-button');
+                infoButton.appendChild(toolbarButton);
+                
+                window.fn.showDialog = function (id) {
+                  var elem = document.getElementById(id);
+                  if (id === 'popover-dialog') {
+                    elem.show(infoButton);
+                  }
+                };
+              
+              };
+            </script>
+
+          </ons-page>
+        </template>
+
+
+        <template id="detail-nilai.html">
+          <ons-dialog id="dialog-3">
+            <div class="dialog-popup">
+              <a href="#" class="button-close" ng-click="page.dialog.hide()"><i class="fa fa-close"></i></a>
+              <div class="title-nilai">
+                Nilai
+              </div>
+              <div class="title">NIS</div>
+              <div class="conten">{{NIS}}</div>
+              <div class="title">Nama</div>
+              <div class="conten">{{Nama}}</div>
+              <div class="title">KodePel</div>
+              <div class="conten">{{KodePel}}</div>
+              <div class="title">Pelajaran</div>
+              <div class="conten">{{Pelajaran}}</div>
+              <div class="title">Nilai</div>
+              <div class="conten">{{Nilai}}</div>
+              <div class="title">Standar</div>
+              <div class="conten">{{Standar}}</div>
+              <div class="title">Status</div>
+              <div class="conten">{{Status}}</div>
+              <div class="title">TglInput</div>
+              <div class="conten">{{TglInput}}</div>
+              <div class="title">Jenis</div>
+              <div class="conten">{{Jenis}}</div>
+              <div class="title">Keterangan</div>
+              <div class="conten">{{Keterangan}}</div>
+            </div>
+          </ons-dialog>
         </template>
 
         <!-- pengumuman -->
@@ -657,22 +807,68 @@
                   <i class="icon fa fa-search"></i>
                   <input class="input-text" type="text" ng-model="searchText" placeholder="Search ...">
                 </div>
-                <table class="content-table content-table-horizontal content-table-highlight" cellspacing="2" cellpadding="5" width="100%" border="0">
-                    <thead>
-                        <tr>
-                          <th>Tanggal</th>
-                          <th>Judul</th>
-                        </tr>
-                      </thead>
-                    <tbody>
-                      <tr ng-repeat="x in list_pengumuman | filter:searchText">
+                <div class="box-list" ng-repeat="x in list_pengumuman | filter:searchText">
+                    <div class="content">{{ x.Tanggal }}</div>
+                    <div class="title"><a href="#" title="Info pengumuman" class="info-pengumuman" ng-click="data.msg=x.Id" onclick="fn.load('pengumuman-detail.html')">{{ x.Judul }}</a></div>
+                </div>
+            </ons-row>
+            
+            
+            <ons-popover id="popover-dialog" cancelable direction="down" cover-target target="#info-button">
+              <ons-list id="popover-list">
+                <ons-list-item class="more-options" onclick="fn.load('dashboard.html')" tappable>
+                  <div class="center">Home</div>
+                </ons-list-item>
+                <ons-list-item class="more-options" ng-click="logout()" tappable>
+                  <div class="center">Logout</div>
+                </ons-list-item>
+              </ons-list>
+            </ons-popover>
+            
+            <script>
+              ons.getScriptPage().onInit = function () {
 
-                        <td><a href="#" title="Info pengumunan" class="info-pengumunan" ng-click="data.msg=x.Id" onclick="fn.load('detail-pengumunan.html')">{{ x.Tanggal }}</a></td>
-                        <td>{{ x.Judul }}</td>
+                var toolbarButton = ons.platform.isAndroid() ? ons.createElement(`<ons-icon icon="md-more-vert"></ons-icon>`) : ons.createElement(`<span><i class="zmdi zmdi-more-vert"></i></span>`);
+                var infoButton = document.getElementById('info-button');
+                infoButton.appendChild(toolbarButton);
+                
+                window.fn.showDialog = function (id) {
+                  var elem = document.getElementById(id);
+                  if (id === 'popover-dialog') {
+                    elem.show(infoButton);
+                  }
+                };
+              
+              };
+            </script>
 
-                      </tr>
-                    </tbody>
-                </table>
+          </ons-page>
+        </template>
+
+        <!-- pengumuman -->
+        <template id="pengumuman-detail.html">
+          <ons-page ng-controller="PagePengumumanDetail" id="contentpage">
+            <ons-toolbar class="toolbar">
+              <div class="left">
+                <ons-back-button onclick="fn.load('pengumuman.html')"></ons-back-button>
+              </div>
+              <div class="center toolbar-head-title">
+                Pengumuman Detail
+              </div>
+              <div class="right">
+                <ons-toolbar-button id="info-button" onclick="fn.showDialog('popover-dialog')"></ons-toolbar-button>
+              </div>
+            </ons-toolbar>
+
+
+            <!-- Content -->
+            <ons-row class="page-content">
+              <div class="info">
+                <div class="tanggal">{{ Tanggal }}</div>
+                <div class="judul">{{ Judul }}</div>
+                <div class="deskripsi">{{ Pengumuman }}</div>
+                <div class="publish">{{ BeginPublish }} s/d {{ EndPublish }}</div>
+              </div>
             </ons-row>
             
             
@@ -729,24 +925,72 @@
                   <i class="icon fa fa-search"></i>
                   <input class="input-text" type="text" ng-model="searchText" placeholder="Search ...">
                 </div>
-                <table class="content-table content-table-horizontal content-table-highlight" cellspacing="2" cellpadding="5" width="100%" border="0">
-                    <thead>
-                        <tr>
-                          <th>Judul</th>
-                          <th>Tgl Awal</th>
-                          <th>Tgl Akhir</th>
-                        </tr>
-                      </thead>
-                    <tbody>
-                      <tr ng-repeat="x in list_agenda | filter:searchText">
+                <div class="box-list" ng-repeat="x in list_agenda | filter:searchText">
+                    <div class="content">{{ x.TglAwal }} s/d {{ x.TglAkhir }}</div>
+                    <div class="title"><a href="#" title="Info" class="info-agenda" ng-click="data.msg=x.Id" onclick="fn.load('agenda-detail.html')">{{ x.Judul }}</a></div>
+                </div>   
+            </ons-row>
+            
+            
+            <ons-popover id="popover-dialog" cancelable direction="down" cover-target target="#info-button">
+              <ons-list id="popover-list">
+                <ons-list-item class="more-options" onclick="fn.load('dashboard.html')" tappable>
+                  <div class="center">Home</div>
+                </ons-list-item>
+                <ons-list-item class="more-options" ng-click="logout()" tappable>
+                  <div class="center">Logout</div>
+                </ons-list-item>
+              </ons-list>
+            </ons-popover>
+            
+            <script>
+              ons.getScriptPage().onInit = function () {
 
-                        <td><a href="#" title="Info agenda" class="info-agenda" ng-click="data.msg=x.Id" onclick="fn.load('detail-agenda.html')">{{ x.Judul }}</a></td>
-                        <td>{{ x.TglAwal }}</td>
-                        <td>{{ x.TglAkhir }}</td>
+                var toolbarButton = ons.platform.isAndroid() ? ons.createElement(`<ons-icon icon="md-more-vert"></ons-icon>`) : ons.createElement(`<span><i class="zmdi zmdi-more-vert"></i></span>`);
+                var infoButton = document.getElementById('info-button');
+                infoButton.appendChild(toolbarButton);
+                
+                window.fn.showDialog = function (id) {
+                  var elem = document.getElementById(id);
+                  if (id === 'popover-dialog') {
+                    elem.show(infoButton);
+                  }
+                };
+              
+              };
+            </script>
 
-                      </tr>
-                    </tbody>
-                  </table>    
+          </ons-page>
+        </template>
+
+        <!-- agenda detail -->
+        <template id="agenda-detail.html">
+          <ons-page ng-controller="PageAgendaDetail" id="contentpage">
+            <ons-toolbar class="toolbar">
+              <div class="left">
+                <ons-back-button onclick="fn.load('agenda.html')"></ons-back-button>
+              </div>
+              <div class="center toolbar-head-title">
+                Agenda Detail
+              </div>
+              <div class="right">
+                <ons-toolbar-button id="info-button" onclick="fn.showDialog('popover-dialog')"></ons-toolbar-button>
+              </div>
+            </ons-toolbar>
+
+
+            <!-- Content -->
+            <ons-row class="page-content">
+                <div class="search-bar">
+                  <i class="icon fa fa-search"></i>
+                  <input class="input-text" type="text" ng-model="searchText" placeholder="Search ...">
+                </div>
+                <div class="info">
+                  <div class="tanggal">{{ TglAwal }} s/d {{ TglAkhir }}</div>
+                  <div class="judul">{{ Judul }}</div>
+                  <div class="deskripsi" ng-bind-html="Deskripsi"></div>
+                  <div class="publish">{{ JamAwal }} s/d {{ JamAkhir }}</div>
+                </div>
             </ons-row>
             
             
@@ -806,7 +1050,7 @@
               <ul id="rig">
               <span ng-repeat="x in list_album | filter:searchText">
                   <li>
-                      <a class="rig-cell" href="#" onclick="fn.load('album-detail.html')" class="nav-page">
+                      <a class="rig-cell" href="#" ng-click="data.msg=x.Id" onclick="fn.load('album-detail.html')" class="nav-page">
                           <span>
                             <img ng-src="{{BASE_URL}}/{{x.Cover}}" width="50%">
                           </span>
@@ -850,15 +1094,93 @@
           </ons-page>
         </template>
 
-        <!-- event -->
-        <template id="event.html">
-          <ons-page ng-controller="PageEvent" id="contentpage">
+        <!-- album detail -->
+        <template id="album-detail.html">
+          <ons-page ng-controller="PageAlbumDetail as page" id="contentpage">
+            <ons-toolbar class="toolbar">
+              <div class="left">
+                <ons-back-button onclick="fn.load('album.html')"></ons-back-button>
+              </div>
+              <div class="center toolbar-head-title">
+                Album Detail
+              </div>
+              <div class="right">
+                <ons-toolbar-button id="info-button" onclick="fn.showDialog('popover-dialog')"></ons-toolbar-button>
+              </div>
+            </ons-toolbar>
+
+
+            <!-- Content -->
+            <ons-row class="page-content">
+              <div class="search-bar">
+                  <i class="icon fa fa-search"></i>
+                  <input class="input-text" type="text" ng-model="searchText" placeholder="Search ...">
+              </div>
+              <ul id="rig">
+              <span ng-repeat="x in list_album_detail | filter:searchText">
+                  <li>
+                      <a class="rig-cell" href="#" ng-click="page.showDialog(x.Id)" class="nav-page">
+                          <span>
+                            <img ng-src="{{BASE_URL}}/{{x.Image}}" width="50%">
+                          </span>
+                          <h3>{{x.Judul}}</h3>
+                          <span class="rig-overlay"><div ng-bind-html="Deskripsi"></div></span>
+                      </a>
+                  </li>
+              </span>
+              </ul>
+            </ons-row>
+            
+            
+            <ons-popover id="popover-dialog" cancelable direction="down" cover-target target="#info-button">
+              <ons-list id="popover-list">
+                <ons-list-item class="more-options" onclick="fn.load('dashboard.html')" tappable>
+                  <div class="center">Home</div>
+                </ons-list-item>
+                <ons-list-item class="more-options" ng-click="logout()" tappable>
+                  <div class="center">Logout</div>
+                </ons-list-item>
+              </ons-list>
+            </ons-popover>
+            
+            <script>
+              ons.getScriptPage().onInit = function () {
+
+                var toolbarButton = ons.platform.isAndroid() ? ons.createElement(`<ons-icon icon="md-more-vert"></ons-icon>`) : ons.createElement(`<span><i class="zmdi zmdi-more-vert"></i></span>`);
+                var infoButton = document.getElementById('info-button');
+                infoButton.appendChild(toolbarButton);
+                
+                window.fn.showDialog = function (id) {
+                  var elem = document.getElementById(id);
+                  if (id === 'popover-dialog') {
+                    elem.show(infoButton);
+                  }
+                };
+              
+              };
+            </script>
+
+          </ons-page>
+        </template>
+
+        <template id="detail-album-view.html">
+          <ons-dialog id="dialog-3">
+            <div class="dialog-popup">
+              <a href="#" class="button-close" ng-click="page.dialog.hide()"><i class="fa fa-close"></i></a>
+              <img ng-src="{{BASE_URL}}/{{Image}}" width="100%">
+            </div>
+          </ons-dialog>
+        </template>
+
+        <!-- akademik -->
+        <template id="akademik.html">
+          <ons-page ng-controller="PageAkademik" id="contentpage">
             <ons-toolbar class="toolbar">
               <div class="left">
                 <ons-back-button onclick="fn.load('dashboard.html')"></ons-back-button>
               </div>
               <div class="center toolbar-head-title">
-                Event
+                Akademik
               </div>
               <div class="right">
                 <ons-toolbar-button id="info-button" onclick="fn.showDialog('popover-dialog')"></ons-toolbar-button>
@@ -872,22 +1194,74 @@
                   <i class="icon fa fa-search"></i>
                   <input class="input-text" type="text" ng-model="searchText" placeholder="Search ...">
                 </div>
-                <table class="content-table content-table-horizontal content-table-highlight" cellspacing="2" cellpadding="5" width="100%" border="0">
-                    <thead>
-                        <tr>
-                          <th>Event</th>
-                          <th>Tanggal</th>
-                        </tr>
-                      </thead>
-                    <tbody>
-                      <tr ng-repeat="x in list_event | filter:searchText">
+                <div class="box-list" ng-repeat="x in list_akademik | filter:searchText">
+                    <div class="content">{{ x.Tanggal }}</div>
+                    <div class="title"><a href="#" title="Info" class="info-akademik" ng-click="data.msg=x.Id" onclick="fn.load('akademik-detail.html')">{{ x.Event }}</a></div>
+                </div>
+              </ons-row>
+            
+            
+            <ons-popover id="popover-dialog" cancelable direction="down" cover-target target="#info-button">
+              <ons-list id="popover-list">
+                <ons-list-item class="more-options" onclick="fn.load('dashboard.html')" tappable>
+                  <div class="center">Home</div>
+                </ons-list-item>
+                <ons-list-item class="more-options" ng-click="logout()" tappable>
+                  <div class="center">Logout</div>
+                </ons-list-item>
+              </ons-list>
+            </ons-popover>
+            
+            <script>
+              ons.getScriptPage().onInit = function () {
 
-                        <td><a href="#" title="Info agenda" class="info-agenda" ng-click="data.msg=x.Id" onclick="fn.load('detail-agenda.html')">{{ x.Event }}</a></td>
-                        <td>{{ x.Tanggal }}</td>
+                var toolbarButton = ons.platform.isAndroid() ? ons.createElement(`<ons-icon icon="md-more-vert"></ons-icon>`) : ons.createElement(`<span><i class="zmdi zmdi-more-vert"></i></span>`);
+                var infoButton = document.getElementById('info-button');
+                infoButton.appendChild(toolbarButton);
+                
+                window.fn.showDialog = function (id) {
+                  var elem = document.getElementById(id);
+                  if (id === 'popover-dialog') {
+                    elem.show(infoButton);
+                  }
+                };
+              
+              };
+            </script>
 
-                      </tr>
-                    </tbody>
-                  </table>
+          </ons-page>
+        </template>
+
+        <!-- akademik detail -->
+        <template id="akademik-detail.html">
+          <ons-page ng-controller="PageAkademikDetail" id="contentpage">
+            <ons-toolbar class="toolbar">
+              <div class="left">
+                <ons-back-button onclick="fn.load('akademik.html')"></ons-back-button>
+              </div>
+              <div class="center toolbar-head-title">
+                Akademik Detail
+              </div>
+              <div class="right">
+                <ons-toolbar-button id="info-button" onclick="fn.showDialog('popover-dialog')"></ons-toolbar-button>
+              </div>
+            </ons-toolbar>
+
+
+            <!-- Content -->
+            <ons-row class="page-content">
+                <div class="search-bar">
+                  <i class="icon fa fa-search"></i>
+                  <input class="input-text" type="text" ng-model="searchText" placeholder="Search ...">
+                </div>
+                <div class="info">
+                  <div class="tanggal">{{ Tanggal }}</div>
+                  <div class="judul">{{ Event }}</div>
+                  <div class="publish">{{ Tempat }}</div>
+                  <div class="deskripsi" ng-bind-html="Deskripsi"></div>
+                  <div class="publish">Status: {{ Status }}</div>
+                  <div class="publish">Ket: {{ Keterangan }}</div>
+                </div>
               </ons-row>
             
             
