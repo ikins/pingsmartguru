@@ -7,12 +7,12 @@ var appguru =  angular.module('app', ['onsen','ipCookie','highcharts-ng','ngRout
 
 
 //server
-//var _URL        = "http://smartschool.trilogi-solution.com/api/";
-//var BASE_URL    = "http://smartschool.trilogi-solution.com";
+var _URL        = "http://smartschool.trilogi-solution.com/api/";
+var BASE_URL    = "http://smartschool.trilogi-solution.com";
 
 //local
-var _URL      = "http://localhost:7777/apismart/api/";
-var BASE_URL  = "http://localhost:7777/apismart";
+//var _URL      = "http://localhost:7777/apismart/api/";
+//var BASE_URL  = "http://localhost:7777/apismart";
 
 
 var app = {
@@ -21,6 +21,7 @@ var app = {
     },
     bindEvents: function() {
         document.addEventListener('deviceready', this.onDeviceReady, false);
+        document.addEventListener("backbutton", this.onBackKeyDown, false);
     },
     onDeviceReady: function() {
         app.receivedEvent('deviceready');
@@ -37,8 +38,31 @@ var app = {
             } else {
                 fn.load('dashboard.html');
             }
+    },
+    onBackKeyDown: function(e) { 
+       e.preventDefault(); 
+       alert('Back Button is Pressed!'); 
     }
+
+
 };
+
+ons.ready(function() {
+  // deviceready event is fired
+  // Call whatever Cordova APIs
+
+  ons.enableDeviceBackButtonHandler();
+
+    // Set a new handler
+    ons.setDefaultDeviceBackButtonListener(function(event) {
+      ons.notification.confirm('Do you want to close the app?') // Ask for confirmation
+        .then(function(index) {
+          if (index === 1) { // OK button
+            navigator.app.exitApp(); // Close the app
+          }
+        });
+    });
+});
 
 //config loading bar
 appguru.config(['cfpLoadingBarProvider', function(cfpLoadingBarProvider) {
@@ -76,6 +100,9 @@ appguru.controller('getCurrentInfoWeek', ['$scope', '$http','ipCookie', function
 
 appguru.controller('PageController', ['$scope', '$http','ipCookie', 'md5', function($scope, $http, ipCookie, md5) {
 
+    /*Tahun*/
+
+    $scope.date = new Date();
 
     $scope.login = function(){
 
@@ -99,7 +126,16 @@ appguru.controller('PageController', ['$scope', '$http','ipCookie', 'md5', funct
                     window.localStorage.setItem("nama", response.data[0].Nama);
                     window.localStorage.setItem("avatar", response.data[0].Avatar);
 
-                    fn.load('dashboard.html');
+                    //Login status
+                    if(response.data[0].IsLogin == 0){
+
+                        fn.load('change-password.html');
+
+                    }else{
+
+                        fn.load('dashboard.html');
+
+                    }
 
                  } else if (response.response_code != 1) {
                     ons.notification.alert({
@@ -157,6 +193,82 @@ appguru.controller('PageController', ['$scope', '$http','ipCookie', 'md5', funct
 
 }]);
 
+appguru.controller('PageChangePassword', ['$scope', '$http', function($scope, $http) {
+
+    //formdata
+    $scope.formData = {
+      word: /^\s*\w*\s*$/
+    };
+
+    // Set the default value of inputType
+    $scope.inputType = 'password';
+    
+    // Hide & show password function
+    $scope.hideShowPassword = function(){
+      if ($scope.inputType == 'password')
+        $scope.inputType = 'text';
+      else
+        $scope.inputType = 'password';
+    };
+
+
+    $scope.changePasswords = function(){
+
+        function change_action() {
+
+            token_guru  = window.localStorage.getItem("token_guru");
+            $scope.formData.token = token_guru;
+
+            $http({ method  : 'POST',
+                url     :  _URL+"change-password",
+                data    : $.param($scope.formData),  // pass in data as strings
+                headers : { 'Content-Type': 'application/x-www-form-urlencoded' }   
+            })
+            .success(function(response) {
+
+                if (response.response_code == 1) {
+
+                    ons.notification.alert({
+                      messageHTML: 'Change Password Success',
+                      title: 'Notifikasi',
+                      buttonLabel: 'OK',
+                      animation: 'default',
+                      callback: function() {
+                        // Alert button is closed!
+                      }
+                    });
+
+                    fn.load('login.html');
+
+                }
+
+            });
+
+        }
+
+        if ( $scope.formData.password == undefined ) {
+                ons.notification.alert({
+                  messageHTML: 'Password Harus Diisi',
+                  title: 'Notifikasi',
+                  buttonLabel: 'OK',
+                  animation: 'default', // or 'none'
+                  // modifier: 'optional-modifier'
+                  callback: function() {
+                    // Alert button is closed!
+                  }
+                });
+                
+                return false;
+            }
+
+        change_action();
+
+    
+    }
+
+
+}]);
+
 appguru.controller('Pagedashboard', ['$scope', '$http', function($scope, $http) {
 
   $scope.Nama = window.localStorage.getItem("nama");
@@ -175,6 +287,14 @@ appguru.controller('Pagedashboard', ['$scope', '$http', function($scope, $http) 
         $scope.JamAjar = response.data[0].JamAjar;
 
   });
+
+  $http.get( _URL+"guru-pengumuman-one?token=" + token_guru)
+        .success(function (response) {
+
+        $scope.Id = response.data[0].Id;
+        $scope.Judul = response.data[0].Judul;
+
+    });
 
 }]);
 
@@ -238,12 +358,269 @@ appguru.controller('PageNilai', ['$scope', '$http', function($scope, $http) {
     token_guru  = window.localStorage.getItem("token_guru");
     nip_guru    = window.localStorage.getItem("nip_guru");
 
+    $scope.formData = {};
+
     $http.get( _URL+"nilai-by-guru?token=" + token_guru)
         .success(function (response) {
 
         $scope.list_nilai_ulangan = response.data;
 
     });
+
+
+    $http.get( _URL+"kelas?token=" + token_guru)
+        .success(function (response) {
+
+        $scope.list_kelas = response.data;
+
+    });
+
+    $http.get( _URL+"jenis-nilai?token=" + token_guru)
+        .success(function (response) {
+
+        $scope.list_jenis_nilai = response.data;
+
+    });
+
+    $http.get( _URL+"pelajaran-by-guru?token=" + token_guru)
+        .success(function (response) {
+
+        $scope.list_mata_pelajaran = response.data;
+
+    });
+
+
+    $scope.add_jenis_nilai = function(){
+
+
+      //convert tanggal
+      function convert(str) {
+            var date = new Date(str),
+                mnth = ("0" + (date.getMonth()+1)).slice(-2),
+                day  = ("0" + date.getDate()).slice(-2);
+            return [ date.getFullYear(), mnth, day ].join("-");
+      }
+
+      $scope.formData.tanggal       = convert($scope.formData.tanggal_nilai);
+
+        function add_jenis_nilai_action() {
+
+            token_guru  = window.localStorage.getItem("token_guru");
+            $scope.formData.token = token_guru;
+
+            $http({ method  : 'POST',
+                url     :  _URL+"nilai-create",
+                data    : $.param($scope.formData),  // pass in data as strings
+                headers : { 'Content-Type': 'application/x-www-form-urlencoded' }   
+            })
+            .success(function(response) {
+
+                if (response.response_code == 1) {
+
+                    ons.notification.alert({
+                      messageHTML: 'Create Nilai Success',
+                      title: 'Notifikasi',
+                      buttonLabel: 'OK',
+                      animation: 'default',
+                      callback: function() {
+                        // Alert button is closed!
+                      }
+                    });
+
+                    fn.load('nilai.html');
+
+                }
+
+            });
+
+        }
+
+        if ( $scope.formData.kodekelas == undefined ) {
+                ons.notification.alert({
+                  messageHTML: 'Kode Harus Dipilih',
+                  title: 'Notifikasi',
+                  buttonLabel: 'OK',
+                  animation: 'default', // or 'none'
+                  // modifier: 'optional-modifier'
+                  callback: function() {
+                    // Alert button is closed!
+                  }
+                });
+                
+                return false;
+            }
+
+        if ( $scope.formData.idjenis == undefined ) {
+                ons.notification.alert({
+                  messageHTML: 'Jenis Nilai Harus Dipilih',
+                  title: 'Notifikasi',
+                  buttonLabel: 'OK',
+                  animation: 'default', // or 'none'
+                  // modifier: 'optional-modifier'
+                  callback: function() {
+                    // Alert button is closed!
+                  }
+                });
+                
+                return false;
+            }
+
+        if ( $scope.formData.kodepel == undefined ) {
+                ons.notification.alert({
+                  messageHTML: 'Mata Pelajaran Harus Dipilih',
+                  title: 'Notifikasi',
+                  buttonLabel: 'OK',
+                  animation: 'default', // or 'none'
+                  // modifier: 'optional-modifier'
+                  callback: function() {
+                    // Alert button is closed!
+                  }
+                });
+                
+                return false;
+            }
+
+        if ( $scope.formData.tanggal == undefined ) {
+                ons.notification.alert({
+                  messageHTML: 'Tanggal Harus Diisi',
+                  title: 'Notifikasi',
+                  buttonLabel: 'OK',
+                  animation: 'default', // or 'none'
+                  // modifier: 'optional-modifier'
+                  callback: function() {
+                    // Alert button is closed!
+                  }
+                });
+                
+                return false;
+            }
+
+        add_jenis_nilai_action();
+
+    }
+
+}]);
+
+
+appguru.controller('PageNilaiSiswa', ['$scope', '$http', function($scope, $http) {
+
+    $scope.formData = {};
+
+    if($scope.data.msg != ''){
+
+        $http.get( _URL+"siswa-by-guru?token=" + token_guru + "&id=" + $scope.data.msg)
+        .success(function (response) {
+
+            $scope.list_siswa = response.data;
+
+        });
+
+        $http.get( _URL+"jenis-nilai-by-id?id=" + $scope.data.msg + "&token=" + token_guru)
+        .success(function (response) {
+
+              $scope.formData.kode = response.data[0].Kode;
+
+
+        });
+    }
+
+    
+    $http.get( _URL+"status-nilai?token=" + token_guru)
+        .success(function (response) {
+
+        $scope.list_status_nilai = response.data;
+
+    });
+
+    $scope.add_nilai_siswa = function(){
+
+        function add_nilai_siswa_action() {
+
+            token_guru  = window.localStorage.getItem("token_guru");
+            $scope.formData.token = token_guru;
+
+            $http({ method  : 'POST',
+                url     :  _URL+"nilai-detail-add",
+                data    : $.param($scope.formData),  // pass in data as strings
+                headers : { 'Content-Type': 'application/x-www-form-urlencoded' }   
+            })
+            .success(function(response) {
+
+                if (response.response_code == 1) {
+
+                    ons.notification.alert({
+                      messageHTML: 'Create Nilai Success',
+                      title: 'Notifikasi',
+                      buttonLabel: 'OK',
+                      animation: 'default',
+                      callback: function() {
+                        // Alert button is closed!
+                      }
+                    });
+
+                    //fn.load('nilai.html');
+
+                    var options = {
+                      data: {
+                        msg: $scope.data.msg
+                      }
+                    };
+                    navi.pushPage('nilai-show.html', options);
+
+                }
+
+            });
+
+        }
+
+        if ( $scope.formData.nis == undefined ) {
+                ons.notification.alert({
+                  messageHTML: 'Siswa Harus Dipilih',
+                  title: 'Notifikasi',
+                  buttonLabel: 'OK',
+                  animation: 'default', // or 'none'
+                  // modifier: 'optional-modifier'
+                  callback: function() {
+                    // Alert button is closed!
+                  }
+                });
+                
+                return false;
+            }
+
+        if ( $scope.formData.nilai == undefined ) {
+                ons.notification.alert({
+                  messageHTML: 'Nilai Harus Diisi',
+                  title: 'Notifikasi',
+                  buttonLabel: 'OK',
+                  animation: 'default', // or 'none'
+                  // modifier: 'optional-modifier'
+                  callback: function() {
+                    // Alert button is closed!
+                  }
+                });
+                
+                return false;
+            }
+
+        if ( $scope.formData.idstat == undefined ) {
+                ons.notification.alert({
+                  messageHTML: 'Status Harus Dipilih',
+                  title: 'Notifikasi',
+                  buttonLabel: 'OK',
+                  animation: 'default', // or 'none'
+                  // modifier: 'optional-modifier'
+                  callback: function() {
+                    // Alert button is closed!
+                  }
+                });
+                
+                return false;
+            }
+
+        add_nilai_siswa_action();
+
+    }
 
 }]);
 
@@ -356,6 +733,16 @@ appguru.controller('PageNilaiShow', ['$scope', '$http', function($scope, $http) 
 
 
     });
+
+    $http.get( _URL+"jenis-nilai-by-kode?kode=" + $scope.data.msg + "&token=" + token_guru)
+        .success(function (response) {
+
+          $scope.IdJenisNilai = response.data[0].Id;
+
+
+    });
+
+
 
     this.showDialog = function(Id) {
 

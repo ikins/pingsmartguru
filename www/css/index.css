@@ -19,20 +19,105 @@ body{
   background-color: #ffffff;
 }
 #landing-contentpage .page__background, #login-contentpage .page__background{
-  background-color: #ff9901;
+  background-color: #98ceea;
+}
+
+/** Form 
+*-----------------------------------
+*/
+
+.text-input-reg-pass {
+   border: 1px solid #ccc;
+   font-size: 16px;
+   height: 34px;
+   width: 200px;
+   padding-left: 5px;
+   font-family: 'Raleway', sans-serif;
+}
+
+.error-reg{
+  text-align: center;
+  font-family: 'Raleway', sans-serif;
+  font-size: 12px;
+  color: #a20e27;
+}
+
+.hpassword{
+  text-align: center;
+  font-family: 'Raleway', sans-serif;
+  font-size: 12px;
+  color: #333;
+}
+
+.copyright{
+  text-align: center;
+  font-family: 'Raleway', sans-serif;
+  font-size: 12px;
+  color: #fff;
+  margin-top: 100px;
+}
+
+/** Add 
+*-----------------------------------
+*/
+
+.add {
+  padding: 20px 0;
+  text-align: left;
+  font-family: 'Raleway', sans-serif;
+  font-size: 12px;
+  color: #333;
+  width: 100%;
+}
+
+.add .label{
+  font-size: 14px;
+  font-weight: bold;
+  padding: 10px 0;
+}
+
+.add .input {
+  padding-bottom: 10px;
+  border-bottom: 1px solid #e8e5e5;
+}
+
+.add .style-select select {
+   border: 1px solid #ccc;
+   font-size: 12px;
+   height: 34px;
+   width: 274px;
+   padding-left: 5px;
+}
+
+.add .input-text {
+  border: 1px solid #ccc;
+  font-size: 16px;
+  height: 34px;
+  width: 200px;
+  padding-left: 5px;
+  font-family: 'Raleway', sans-serif;
+}
+
+.add .input-textarea {
+  border: 1px solid #ccc;
+  font-size: 16px;
+  height: 200px;
+  width: 80%;
+  padding-left: 5px;
+  font-family: 'Raleway', sans-serif;
 }
 
 /** Logo 
 *-----------------------------------
 */
 
-.logo-siswa{
+.logo-guru{
 
   margin-top: 100px;
   text-align: center;
 }
 
-.logo-siswa-content{
+.logo-guru-content{
 
   margin-top: 10px;
   text-align: center;
@@ -119,15 +204,23 @@ body{
   background: #89bcd6;
 }
 
-.page-content-warning .info{ 
+.page-content-warning .info-warning{ 
   font-size: 14px;
   color: #fff;
 }
 
-.page-content-warning .info i{ 
+.page-content-warning .info-warning i{ 
   font-size: 14px;
   color: #fbcd28;
 }
+
+.page-content-warning .info-warning a{ 
+  font-size: 14px;
+  color: #fff;
+  text-decoration: none;
+  cursor: pointer;
+}
+
 
 .page-content-dashboard span {
   font-family: 'Raleway', sans-serif;
@@ -395,7 +488,7 @@ a.log-a {
 *-----------------------------------
 */
 
-.button-signin, .button-register, .button-lupa {
+.button-signin, .button-register, .button-lupa, .button-save {
     box-sizing: border-box;
     margin: 0;
     background: #ff9901;
@@ -782,6 +875,7 @@ a.log-a {
   font-size: 12px;
 
 }
+
 /** Img List 
 *-----------------------------------
 */

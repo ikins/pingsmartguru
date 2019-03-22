@@ -78,6 +78,11 @@
                 <a href="#" class="log-a" onclick="fn.load('login.html')">Log In</a>
               </ons-col>
 
+              <!-- Copyright -->
+                <ons-col class="copyright">
+                  smartSchool &copy; {{date| date:'yyyy'}}
+                </ons-col>
+
             </ons-col>
             
           </ons-page>
@@ -108,7 +113,48 @@
                   <a href="#" class="log-a" onclick="fn.load('lupa-password.html')">Lupa Password?</a>
                 </ons-col>
 
+
+                <!-- Copyright -->
+                <ons-col class="copyright">
+                  smartSchool &copy; {{date| date:'yyyy'}}
+                </ons-col>
+
             </div>
+
+            
+
+          </ons-page>
+        </template>
+
+        <!-- change password -->
+        <template id="change-password.html">
+          <ons-page ng-controller="PageChangePassword" id="login-contentpage">
+            <p class="title_login">
+              Change Password
+            </p>
+
+            <form name="changePassword">
+            <div style="text-align: center; margin-top: 30px">
+                <p>
+                  <input type="{{inputType}}" class="text-input-reg-pass" placeholder="Password" value="" name="password" id="password" ng-model="formData.password" ng-pattern="formData.word" ng-trim="false">
+                  <input type="checkbox" id="checkbox" ng-model="passwordCheckbox" ng-click="hideShowPassword()" />
+                  <label class="hpassword" for="checkbox" ng-if="passwordCheckbox">Hide</label>
+                  <label class="hpassword" for="checkbox" ng-if="!passwordCheckbox">Show</label>
+                  <p class="error-reg" ng-show="changePassword.password.$error.pattern">Tidak Boleh Ada Spasi!</p>
+                </p>
+                <ons-row>
+                    <ons-col style="margin-top: 30px;">
+                      <ons-button ng-click="changePasswords()" class="button-signin">Send</ons-button>
+                    </ons-col>
+                </ons-row>
+
+                <!-- Copyright -->
+                <ons-col class="copyright">
+                  smartSchool &copy; {{date| date:'yyyy'}}
+                </ons-col>
+
+            </div>
+          </form>
 
             
 
@@ -237,8 +283,9 @@
             </div>
             <ons-row class="page-content-warning">
                 <ons-col>
-                  <div class="info">
-                    <i class="fa fa-warning"></i> Informasi Terkini
+                  <div class="info-warning">
+                    <i class="fa fa-warning"></i>
+                    <a href="#" title="Info Terkini" class="info-dashboard" ng-click="data.msg=x.Id" onclick="fn.load('pengumuman-detail.html')">{{Judul}}</a>
                   </div>
                 </ons-col>
             </ons-row>
@@ -629,6 +676,12 @@
               </div>
             </ons-row>
 
+            <a href="#" tappable onclick="fn.load('add-nilai.html')">
+              <ons-fab position="bottom right" style="background-color: #fff; color: #ff0000;">
+                  <ons-icon icon="md-plus"></ons-icon>
+              </ons-fab>
+            </a>
+
           </ons-page>
         </template>
 
@@ -648,6 +701,12 @@
                   <div class="content">{{ x.KodeKelas }}</div>
               </div>
             </ons-row>
+
+            <a href="#" tappable onclick="fn.load('add-nilai.html')">
+              <ons-fab position="bottom right" style="background-color: #fff; color: #ff0000;">
+                  <ons-icon icon="md-plus"></ons-icon>
+              </ons-fab>
+            </a>
 
           </ons-page>
         </template>
@@ -669,6 +728,12 @@
               </div>
             </ons-row>
 
+            <a href="#" tappable onclick="fn.load('add-nilai.html')">
+              <ons-fab position="bottom right" style="background-color: #fff; color: #ff0000;">
+                  <ons-icon icon="md-plus"></ons-icon>
+              </ons-fab>
+            </a>
+
           </ons-page>
         </template>
 
@@ -688,6 +753,12 @@
                   <div class="content">{{ x.KodeKelas }}</div>
               </div>
             </ons-row>
+
+            <a href="#" tappable onclick="fn.load('add-nilai.html')">
+              <ons-fab position="bottom right" style="background-color: #fff; color: #ff0000;">
+                  <ons-icon icon="md-plus"></ons-icon>
+              </ons-fab>
+            </a>
 
           </ons-page>
         </template>
@@ -720,6 +791,12 @@
                   <div class="content">{{ x.Pelajaran }}</div>
               </div>
             </ons-row>
+
+              <a href="#" tappable ng-click="data.msg=IdJenisNilai" onclick="fn.load('add-nilai-siswa.html')">
+                <ons-fab position="bottom right" style="background-color: #fff; color: #ff0000;">
+                    <ons-icon icon="md-plus"></ons-icon>
+                </ons-fab>
+              </a>
             
             
             <ons-popover id="popover-dialog" cancelable direction="down" cover-target target="#info-button">
@@ -783,6 +860,182 @@
               <div class="conten">{{Keterangan}}</div>
             </div>
           </ons-dialog>
+        </template>
+
+        <!-- add nilai -->
+        <template id="add-nilai.html">
+          <ons-page ng-controller="PageNilai" id="contentpage">
+            <ons-toolbar class="toolbar">
+              <div class="left">
+                <ons-back-button onclick="fn.load('nilai.html')"></ons-back-button>
+              </div>
+              <div class="center toolbar-head-title">
+                Add Jenis Nilai
+              </div>
+              <div class="right">
+                <ons-toolbar-button id="info-button" onclick="fn.showDialog('popover-dialog')"></ons-toolbar-button>
+              </div>
+            </ons-toolbar>
+
+
+            <!-- Content -->
+            <ons-row class="page-content">
+                <div class="add">
+                  <div class="label">Kelas</div>
+                  <div class="input">
+                      <div class="style-select">
+                          <select ng-model="formData.kodekelas">
+                            <option value="" disabled selected>Pilih Kelas</option>
+                            <option ng-repeat="x in list_kelas" value="{{x.Kode}}">{{x.Kode}}</option>
+                          </select>
+                      </div>
+                  </div>
+                  <div class="label">Jenis Nilai</div>
+                  <div class="input">
+                      <div class="style-select">
+                          <select ng-model="formData.idjenis">
+                            <option value="" disabled selected>Pilih Jenis</option>
+                            <option ng-repeat="x in list_jenis_nilai" value="{{x.Id}}">{{x.Jenis}}</option>
+                          </select>
+                      </div>
+                  </div>
+                  <div class="label">Mata Pelajaran</div>
+                  <div class="input">
+                      <div class="style-select">
+                          <select ng-model="formData.kodepel">
+                            <option value="" disabled selected>Pilih Mata Pelajaran</option>
+                            <option ng-repeat="x in list_mata_pelajaran" value="{{x.KodePel}}">{{x.Pelajaran}}</option>
+                          </select>
+                      </div>
+                  </div>
+                  <div class="label">Tanggal</div>
+                  <div class="input">
+                      <input placeholder="Tanggal" class="input-text" id="tanggal" ng-model="formData.tanggal_nilai" type="date">
+                  </div>
+                  <div class="label">Keterangan</div>
+                  <div class="input">
+                      <textarea ng-model="formData.keterangan" class="input-textarea"></textarea>
+                  </div>
+                  <div class="label">
+                    <ons-button ng-click="add_jenis_nilai()" class="button-save">Simpan</ons-button>
+                  </div>
+                </div>
+            </ons-row>
+            
+            
+            <ons-popover id="popover-dialog" cancelable direction="down" cover-target target="#info-button">
+              <ons-list id="popover-list">
+                <ons-list-item class="more-options" onclick="fn.load('dashboard.html')" tappable>
+                  <div class="center">Home</div>
+                </ons-list-item>
+                <ons-list-item class="more-options" ng-click="logout()" tappable>
+                  <div class="center">Logout</div>
+                </ons-list-item>
+              </ons-list>
+            </ons-popover>
+            
+            <script>
+              ons.getScriptPage().onInit = function () {
+
+                var toolbarButton = ons.platform.isAndroid() ? ons.createElement(`<ons-icon icon="md-more-vert"></ons-icon>`) : ons.createElement(`<span><i class="zmdi zmdi-more-vert"></i></span>`);
+                var infoButton = document.getElementById('info-button');
+                infoButton.appendChild(toolbarButton);
+                
+                window.fn.showDialog = function (id) {
+                  var elem = document.getElementById(id);
+                  if (id === 'popover-dialog') {
+                    elem.show(infoButton);
+                  }
+                };
+              
+              };
+            </script>
+
+          </ons-page>
+        </template>
+
+        <!-- add nilai -->
+        <template id="add-nilai-siswa.html">
+          <ons-page ng-controller="PageNilaiSiswa" id="contentpage">
+            <ons-toolbar class="toolbar">
+              <div class="left">
+                <ons-back-button onclick="fn.load('nilai.html')"></ons-back-button>
+              </div>
+              <div class="center toolbar-head-title">
+                Add Nilai Siswa
+              </div>
+              <div class="right">
+                <ons-toolbar-button id="info-button" onclick="fn.showDialog('popover-dialog')"></ons-toolbar-button>
+              </div>
+            </ons-toolbar>
+
+
+            <!-- Content -->
+            <ons-row class="page-content">
+                <div class="add">
+                  <input type="hidden" class="input-text" id="nilai" ng-model="formData.kode">
+                  <div class="label">Nama Siswa</div>
+                  <div class="input">
+                      <div class="style-select">
+                          <select ng-model="formData.nis">
+                            <option value="" disabled selected>Pilih Siswa</option>
+                            <option ng-repeat="x in list_siswa" value="{{x.NIS}}">{{x.Nama}}</option>
+                          </select>
+                      </div>
+                  </div>
+                  <div class="label">Nilai</div>
+                  <div class="input">
+                      <input placeholder="Nilai" class="input-text" id="nilai" ng-model="formData.nilai">
+                  </div>
+                  <div class="label">Status</div>
+                  <div class="input">
+                      <div class="style-select">
+                          <select ng-model="formData.idstat">
+                            <option value="" disabled selected>Pilih Status</option>
+                            <option ng-repeat="x in list_status_nilai" value="{{x.Id}}">{{x.Status}}</option>
+                          </select>
+                      </div>
+                  </div>
+                  <div class="label">Keterangan</div>
+                  <div class="input">
+                      <textarea ng-model="formData.keterangan" class="input-textarea"></textarea>
+                  </div>
+                  <div class="label">
+                    <ons-button ng-click="add_nilai_siswa()" class="button-save">Simpan</ons-button>
+                  </div>
+                </div>
+            </ons-row>
+            
+            
+            <ons-popover id="popover-dialog" cancelable direction="down" cover-target target="#info-button">
+              <ons-list id="popover-list">
+                <ons-list-item class="more-options" onclick="fn.load('dashboard.html')" tappable>
+                  <div class="center">Home</div>
+                </ons-list-item>
+                <ons-list-item class="more-options" ng-click="logout()" tappable>
+                  <div class="center">Logout</div>
+                </ons-list-item>
+              </ons-list>
+            </ons-popover>
+            
+            <script>
+              ons.getScriptPage().onInit = function () {
+
+                var toolbarButton = ons.platform.isAndroid() ? ons.createElement(`<ons-icon icon="md-more-vert"></ons-icon>`) : ons.createElement(`<span><i class="zmdi zmdi-more-vert"></i></span>`);
+                var infoButton = document.getElementById('info-button');
+                infoButton.appendChild(toolbarButton);
+                
+                window.fn.showDialog = function (id) {
+                  var elem = document.getElementById(id);
+                  if (id === 'popover-dialog') {
+                    elem.show(infoButton);
+                  }
+                };
+              
+              };
+            </script>
+
+          </ons-page>
         </template>
 
         <!-- pengumuman -->
